@@ -13,6 +13,7 @@ dependencies = [
 [project.scripts]
 not-large-model = "not_large_model.scripts.run:main"
 not-large-model-predict = "not_large_model.predict:main"
+not-large-model-probe = "not_large_model.probe:main"
 
 [build-system]
 requires = ["hatchling"]

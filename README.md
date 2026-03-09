@@ -155,6 +155,25 @@ src/not_large_model/
     └── run.py    # CLI: train, evaluate, save
 ```
 
+## Fourier probe
+
+After grokking, the model's token embeddings reveal the internal mechanism: each number `k` is encoded as a point on a circle using sinusoidal features at a small set of frequencies. This is the "sparse" structure that weight decay forces the model to find.
+
+```bash
+uv run not-large-model-probe --model z11.pt
+# saves assets/probe.png
+```
+
+![Fourier probe — Z11 after grokking](assets/probe.png)
+
+The three panels show:
+
+- **Fourier power spectrum** (left) — almost all power is concentrated at frequency 2, with a smaller contribution at frequency 4. The model uses just 1–2 frequencies out of the 5 possible for Z11 — that is the sparse part.
+- **Dominant wave patterns** (centre) — the embedding dimensions that carry the most signal follow a clean cosine wave at frequency 2, matching the theoretical `cos(2π·2·k/11)` reference almost exactly.
+- **Embedding heatmap** (right) — raw values of the 16 highest-variance embedding dimensions across tokens 0–10. The rows with smooth colour gradients are the Fourier features; the noisy rows are unused capacity.
+
+This Fourier structure is why the model generalises: instead of memorising each `(a, b)` pair independently, it learned to represent numbers as angles on a circle and compute addition as rotation — a representation that works for every pair, including the ones it never saw during training.
+
 ## Inspiration
 
 This project was inspired by [The most complex model we actually understand](https://www.youtube.com/watch?v=D8GOeCFFby4).
